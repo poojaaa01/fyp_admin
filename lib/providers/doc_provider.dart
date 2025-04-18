@@ -54,7 +54,7 @@ class DocProvider with ChangeNotifier {
       docId: 'counselor-003',
       docTitle: "Dr. Zehangir Khan - Mental Health Counselor",
       docPrice: "2000.00",
-      docCategory: "Counselor",
+      docCategory: "Addiction Counselor",
       docDescription:
       "Dr. Zehangir Khan focuses on relationship counseling, self-esteem building, and coping strategies. He offers a compassionate and non-judgmental approach for young adults and couples.",
       docImage: "https://cdn.dnaindia.com/sites/default/files/styles/full/public/2016/11/24/522526-shah-rukh-dear-zindagi-tu-hi-hai.jpg",

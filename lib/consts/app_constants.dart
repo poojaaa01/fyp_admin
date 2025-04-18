@@ -13,6 +13,8 @@ class AppConstants {
 
   static List<String> categoriesList = [
     'Psychiatrist',
+    'Therapist',
+    'Counselor'
     'Clinical Psychologist',
     'Mental Health Counselor',
     'Behavioral Therapist',

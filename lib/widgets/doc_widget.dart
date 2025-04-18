@@ -1,6 +1,7 @@
 import 'package:fancy_shimmer_image/fancy_shimmer_image.dart';
 import 'package:flutter/material.dart';
 import 'package:fyp_admin/models/doc_type.dart';
+import 'package:fyp_admin/screens/edit_add_form.dart';
 import 'package:fyp_admin/widgets/subtitle_text.dart';
 import 'package:provider/provider.dart';
 import '../../providers/doc_provider.dart';
@@ -30,7 +31,11 @@ class _DocWidgetState extends State<DocWidget> {
         :Padding(
       padding: const EdgeInsets.all(0.0),
       child: GestureDetector(
-        onTap: () {},
+        onTap: () {
+          Navigator.push(context, MaterialPageRoute(builder: (context){
+            return EditAddScreen(doctorType: getCurrDoctor,);
+          }));
+        },
         child: Column(
           children: [
             ClipRRect(

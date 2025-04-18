@@ -8,13 +8,16 @@ import 'package:fyp_admin/consts/app_constants.dart';
 import 'package:fyp_admin/services/app_functions.dart';
 
 import '../consts/validator.dart';
+import '../models/doc_type.dart';
 import '../widgets/subtitle_text.dart';
 import '../widgets/title_text.dart';
 
 class EditAddScreen extends StatefulWidget {
   static const routeName = '/EditAddScreen';
 
-  const EditAddScreen({super.key});
+  const EditAddScreen({super.key, this.doctorType});
+
+  final DoctorType? doctorType;
 
   @override
   State<EditAddScreen> createState() => _EditAddScreenState();
@@ -28,12 +31,20 @@ class _EditAddScreenState extends State<EditAddScreen> {
       _descriptionController;
 
   String? _categoryValue;
+  bool isEditing = false;
+  String? docNetworkImage;
 
   @override
   void initState() {
-    _titleController = TextEditingController(text: "");
-    _priceController = TextEditingController(text: "");
-    _descriptionController = TextEditingController(text: "");
+    if(widget.doctorType != null) {
+      isEditing = true;
+      docNetworkImage = widget.doctorType!.docImage;
+      _categoryValue = widget.doctorType!.docCategory;
+    }
+    _titleController = TextEditingController(
+      text: widget.doctorType?.docTitle,);
+    _priceController = TextEditingController(text: widget.doctorType?.docPrice,);
+    _descriptionController = TextEditingController(text: widget.doctorType?.docDescription,);
 
     super.initState();
   }
@@ -56,6 +67,7 @@ class _EditAddScreenState extends State<EditAddScreen> {
   void removePickedImage() {
     setState(() {
       _pickedImage = null;
+      docNetworkImage = null;
     });
   }
 
@@ -77,7 +89,7 @@ class _EditAddScreenState extends State<EditAddScreen> {
   Future<void> _editPicture() async {
     final isValid = _formKey.currentState!.validate();
     FocusScope.of(context).unfocus();
-    if (_pickedImage == null) {
+    if (_pickedImage == null && docNetworkImage == null) {
       AppFunctions.showErrorOrWarningDialog(
         context: context,
         subtitle: "Please pick up an image",
@@ -133,7 +145,7 @@ class _EditAddScreenState extends State<EditAddScreen> {
                   ),
                   icon: const Icon(Icons.phonelink_erase, color: Colors.red),
                   label: const Text("Clear", style: TextStyle(fontSize: 20)),
-                  onPressed: () {},
+                  onPressed: () {clearForm();},
                 ),
                 ElevatedButton.icon(
                   style: ElevatedButton.styleFrom(
@@ -144,9 +156,14 @@ class _EditAddScreenState extends State<EditAddScreen> {
                     ),
                   ),
                   icon: const Icon(Icons.save),
-                  label: const Text("Save"),
+                  label: Text(
+                      isEditing? "Edit": "Save"),
                   onPressed: () {
-                    _uploadPicture();
+                    if(isEditing) {
+                      _editPicture();
+                    } else {
+                      _uploadPicture();
+                    }
                   },
                 ),
               ],
@@ -155,7 +172,7 @@ class _EditAddScreenState extends State<EditAddScreen> {
         ),
         appBar: AppBar(
           centerTitle: true,
-          title: const TitlesTextWidget(label: "Enter your details"),
+          title: TitlesTextWidget(label:isEditing? "Edit" : "Enter your details"),
         ),
         body: SafeArea(
           child: SingleChildScrollView(
@@ -164,7 +181,17 @@ class _EditAddScreenState extends State<EditAddScreen> {
                 const SizedBox(height: 20),
 
                 // Image Picker
-                if(_pickedImage == null)...[
+                if(isEditing && docNetworkImage != null) ...[
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(12),
+                    child: Image.network(
+                      docNetworkImage!,
+                      height: size.height * 0.5,
+                      alignment: Alignment.center,
+                    ),
+                  ),
+                ]
+                else if(_pickedImage == null) ...[
                   SizedBox(
                     width: size.width * 0.4 + 10,
                     height: size.width * 0.4,
@@ -179,27 +206,28 @@ class _EditAddScreenState extends State<EditAddScreen> {
                               size: 80,
                               color: Colors.green,
                             ),
-                            TextButton(onPressed: (){
-                              localImagePicker();
-                            }, child: Text("Pick your image",),),
+                            TextButton(
+                              onPressed: () {
+                                localImagePicker();
+                              },
+                              child: Text("Pick your image"),
+                            ),
                           ],
                         ),
                       ),
                     ),
                   ),
-                ] else...[
+                ] else ...[
                   ClipRRect(
                     borderRadius: BorderRadius.circular(12),
                     child: Image.file(
-                      File(
-                        _pickedImage!.path,
-                      ),
+                      File(_pickedImage!.path),
                       height: size.height * 0.5,
                       alignment: Alignment.center,
-                    )
-                  )
+                    ),
+                  ),
                 ],
-                if (_pickedImage != null) ...[
+                if (_pickedImage != null || docNetworkImage != null) ...[
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
@@ -219,7 +247,7 @@ class _EditAddScreenState extends State<EditAddScreen> {
                         ),
                       ),
                     ],
-                  )
+                  ),
                 ],
 
                 const SizedBox(height: 25),
