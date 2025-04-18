@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
@@ -14,9 +15,9 @@ class EditAddScreen extends StatefulWidget {
   static const routeName = '/EditAddScreen';
 
   const EditAddScreen({super.key});
+
   @override
-  State<EditAddScreen> createState() =>
-      _EditAddScreenState();
+  State<EditAddScreen> createState() => _EditAddScreenState();
 }
 
 class _EditAddScreenState extends State<EditAddScreen> {
@@ -27,6 +28,7 @@ class _EditAddScreenState extends State<EditAddScreen> {
       _descriptionController;
 
   String? _categoryValue;
+
   @override
   void initState() {
     _titleController = TextEditingController(text: "");
@@ -126,20 +128,11 @@ class _EditAddScreenState extends State<EditAddScreen> {
                     padding: const EdgeInsets.all(8),
                     //backgroundColor: Colors.red,
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(
-                        10,
-                      ),
+                      borderRadius: BorderRadius.circular(10),
                     ),
                   ),
-                  icon: const Icon(
-                      Icons.phonelink_erase,
-                  color: Colors.red,),
-                  label: const Text(
-                    "Clear",
-                    style: TextStyle(
-                      fontSize: 20,
-                    ),
-                  ),
+                  icon: const Icon(Icons.phonelink_erase, color: Colors.red),
+                  label: const Text("Clear", style: TextStyle(fontSize: 20)),
                   onPressed: () {},
                 ),
                 ElevatedButton.icon(
@@ -147,15 +140,11 @@ class _EditAddScreenState extends State<EditAddScreen> {
                     padding: const EdgeInsets.all(12),
                     // backgroundColor: Colors.red,
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(
-                        10,
-                      ),
+                      borderRadius: BorderRadius.circular(10),
                     ),
                   ),
                   icon: const Icon(Icons.save),
-                  label: const Text(
-                    "Save",
-                  ),
+                  label: const Text("Save"),
                   onPressed: () {
                     _uploadPicture();
                   },
@@ -166,40 +155,92 @@ class _EditAddScreenState extends State<EditAddScreen> {
         ),
         appBar: AppBar(
           centerTitle: true,
-          title: const TitlesTextWidget(
-            label: "Enter your details",
-          ),
+          title: const TitlesTextWidget(label: "Enter your details"),
         ),
         body: SafeArea(
           child: SingleChildScrollView(
             child: Column(
               children: [
-                const SizedBox(
-                  height: 20,
-                ),
-                // TODO: Implement the image picker
-                // Image Picker
+                const SizedBox(height: 20),
 
-                const SizedBox(
-                  height: 25,
-                ),
+                // Image Picker
+                if(_pickedImage == null)...[
+                  SizedBox(
+                    width: size.width * 0.4 + 10,
+                    height: size.width * 0.4,
+                    child: DottedBorder(
+                      child: Center(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(
+                              Icons.image_outlined,
+                              size: 80,
+                              color: Colors.green,
+                            ),
+                            TextButton(onPressed: (){
+                              localImagePicker();
+                            }, child: Text("Pick your image",),),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ] else...[
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(12),
+                    child: Image.file(
+                      File(
+                        _pickedImage!.path,
+                      ),
+                      height: size.height * 0.5,
+                      alignment: Alignment.center,
+                    )
+                  )
+                ],
+                if (_pickedImage != null) ...[
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      TextButton(
+                        onPressed: () {
+                          localImagePicker();
+                        },
+                        child: const Text("Pick another image"),
+                      ),
+                      TextButton(
+                        onPressed: () {
+                          removePickedImage();
+                        },
+                        child: const Text(
+                          "Remove image",
+                          style: TextStyle(color: Colors.red),
+                        ),
+                      ),
+                    ],
+                  )
+                ],
+
+                const SizedBox(height: 25),
 
                 // Category dropdown widget
-                 DropdownButton(
-                     items: AppConstants.categoriesDropDownList,
-                     value: _categoryValue,
-                     hint: const Text("Choose a category"),
-                     onChanged: (String? value) {
-                      setState(() {
-                        _categoryValue = value;
-                       });
-                     }),
-                const SizedBox(
-                  height: 25,
+                DropdownButton(
+                  items: AppConstants.categoriesDropDownList,
+                  value: _categoryValue,
+                  hint: const Text("Choose a category"),
+                  onChanged: (String? value) {
+                    setState(() {
+                      _categoryValue = value;
+                    });
+                  },
                 ),
+                const SizedBox(height: 25),
                 Padding(
-                  padding:
-                  const EdgeInsets.symmetric(horizontal: 16, vertical: 0),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 0,
+                  ),
                   child: Form(
                     key: _formKey,
                     child: Column(
@@ -212,9 +253,7 @@ class _EditAddScreenState extends State<EditAddScreen> {
                           maxLines: 2,
                           keyboardType: TextInputType.multiline,
                           textInputAction: TextInputAction.newline,
-                          decoration: const InputDecoration(
-                            hintText: 'Name',
-                          ),
+                          decoration: const InputDecoration(hintText: 'Name'),
                           validator: (value) {
                             return Validators.uploadDocTexts(
                               value: value,
@@ -222,9 +261,7 @@ class _EditAddScreenState extends State<EditAddScreen> {
                             );
                           },
                         ),
-                        const SizedBox(
-                          height: 10,
-                        ),
+                        const SizedBox(height: 10),
                         Row(
                           children: [
                             Flexible(
@@ -239,12 +276,13 @@ class _EditAddScreenState extends State<EditAddScreen> {
                                   ),
                                 ],
                                 decoration: const InputDecoration(
-                                    hintText: 'Price',
-                                    prefix: SubtitleTextWidget(
-                                      label: "Rs. ",
-                                      color: Colors.black,
-                                      fontSize: 16,
-                                    )),
+                                  hintText: 'Price',
+                                  prefix: SubtitleTextWidget(
+                                    label: "Rs. ",
+                                    color: Colors.black,
+                                    fontSize: 16,
+                                  ),
+                                ),
                                 validator: (value) {
                                   return Validators.uploadDocTexts(
                                     value: value,
@@ -253,9 +291,7 @@ class _EditAddScreenState extends State<EditAddScreen> {
                                 },
                               ),
                             ),
-                            const SizedBox(
-                              width: 10,
-                            ),
+                            const SizedBox(width: 10),
                           ],
                         ),
                         const SizedBox(height: 15),
@@ -281,9 +317,7 @@ class _EditAddScreenState extends State<EditAddScreen> {
                     ),
                   ),
                 ),
-                const SizedBox(
-                  height: kBottomNavigationBarHeight + 10,
-                )
+                const SizedBox(height: kBottomNavigationBarHeight + 10),
               ],
             ),
           ),
