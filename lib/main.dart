@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fyp_admin/providers/doc_provider.dart';
 import 'package:fyp_admin/screens/dashboard_screen.dart';
+import 'package:fyp_admin/screens/edit_add_form.dart';
 import 'package:fyp_admin/screens/inner_screen/appointment_screen.dart';
 import 'package:fyp_admin/screens/search_screen.dart';
 import 'package:provider/provider.dart';
@@ -43,6 +44,7 @@ class App extends StatelessWidget {
             routes: {
               AppointmentsScreenFree.routeName: (context) => const AppointmentsScreenFree(),
               SearchScreen.routeName: (context) => const SearchScreen(),
+              EditAddScreen.routeName: (context) => const EditAddScreen(),
 
             },
           );
