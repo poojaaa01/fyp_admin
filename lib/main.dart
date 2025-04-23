@@ -1,3 +1,4 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:fyp_admin/providers/doc_provider.dart';
 import 'package:fyp_admin/screens/dashboard_screen.dart';
@@ -18,38 +19,43 @@ class App extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MultiProvider(
-      providers: [
-        ChangeNotifierProvider(
-          create: (_) {
-            return ThemeProvider();
-          },
-        ),
-        ChangeNotifierProvider(
-          create: (_) {
-            return DocProvider();
-          },
-        ),
-      ],
-      child: Consumer<ThemeProvider>(
-        builder: (context, themeProvider, child) {
-          return MaterialApp(
-            debugShowCheckedModeBanner: false,
-            title: 'Moksha App Admin',
-            theme: Styles.themeData(
-              isDarkTheme: themeProvider.getIsDarkTheme,
-              context: context,
+    return FutureBuilder<FirebaseApp>(
+      future: Firebase.initializeApp(),
+      builder: (context, snapshot) {
+        return MultiProvider(
+          providers: [
+            ChangeNotifierProvider(
+              create: (_) {
+                return ThemeProvider();
+              },
             ),
-            home: const DashboardScreen(),
-            routes: {
-              AppointmentsScreenFree.routeName: (context) => const AppointmentsScreenFree(),
-              SearchScreen.routeName: (context) => const SearchScreen(),
-              EditAddScreen.routeName: (context) => const EditAddScreen(),
+            ChangeNotifierProvider(
+              create: (_) {
+                return DocProvider();
+              },
+            ),
+          ],
+          child: Consumer<ThemeProvider>(
+            builder: (context, themeProvider, child) {
+              return MaterialApp(
+                debugShowCheckedModeBanner: false,
+                title: 'Moksha App Admin',
+                theme: Styles.themeData(
+                  isDarkTheme: themeProvider.getIsDarkTheme,
+                  context: context,
+                ),
+                home: const DashboardScreen(),
+                routes: {
+                  AppointmentsScreenFree.routeName: (context) => const AppointmentsScreenFree(),
+                  SearchScreen.routeName: (context) => const SearchScreen(),
+                  EditAddScreen.routeName: (context) => const EditAddScreen(),
 
+                },
+              );
             },
-          );
-        },
-      ),
+          ),
+        );
+      }
     );
   }
 }
