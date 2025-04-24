@@ -94,17 +94,17 @@ class _EditAddScreenState extends State<EditAddScreen> {
           _isLoading = true;
         });
 
+        final docId = Uuid().v4();
         final ref = FirebaseStorage.instance.ref().child("doctorImages").child(
-            "${_titleController.text}.jpg");
+            "$docId.jpg");
         await ref.putFile(File(_pickedImage!.path));
         docImageUrl = await ref.getDownloadURL();
 
-        final docId = Uuid().v4();
         await FirebaseFirestore.instance
             .collection("doctors")
-            .doc(Uuid().v4())
+            .doc(docId)
             .set({
-          'docId': Uuid().v4(),
+          'docId': docId,
           'docName': _titleController.text,
           'docPrice': _priceController.text,
           'docImage': docImageUrl,
@@ -146,6 +146,7 @@ class _EditAddScreenState extends State<EditAddScreen> {
   Future<void> _editPicture() async {
     final isValid = _formKey.currentState!.validate();
     FocusScope.of(context).unfocus();
+
     if (_pickedImage == null && docNetworkImage == null) {
       AppFunctions.showErrorOrWarningDialog(
         context: context,
@@ -154,7 +155,66 @@ class _EditAddScreenState extends State<EditAddScreen> {
       );
       return;
     }
-    if (isValid) {}
+    if (isValid) {
+      try {
+        setState(() {
+          _isLoading = true;
+        });
+
+        if(_pickedImage != null) {
+          final ref = FirebaseStorage.instance
+              .ref()
+              .child("doctorImages")
+              .child(
+              "${widget.doctorType!.docId}.jpg");
+          await ref.putFile(File(_pickedImage!.path));
+          docImageUrl = await ref.getDownloadURL();
+        }
+        await FirebaseFirestore.instance
+            .collection("doctors")
+            .doc(widget.doctorType!.docId)
+            .update({
+          'docId': widget.doctorType!.docId,
+          'docName': _titleController.text,
+          'docPrice': _priceController.text,
+          'docImage': docImageUrl ?? docNetworkImage,
+          'docCategory': _categoryValue,
+          'docDescription': _descriptionController.text,
+          'createdAt': widget.doctorType!.createdAt,
+        });
+        Fluttertoast.showToast(
+          msg: "Details has been edited",
+          textColor: Colors.white,
+        );
+        if (!mounted) return;
+        await AppFunctions.showErrorOrWarningDialog(
+          isError: false,
+          context: context,
+          subtitle: "Details have been edited. Do you want to clear the form?",
+          fct: () {
+            // Only clear if the user taps OK
+            clearForm();
+          },
+        );
+
+      } on FirebaseException catch (error) {
+         await AppFunctions.showErrorOrWarningDialog(
+           context: context,
+           subtitle: error.message.toString(),
+           fct: () {},
+         );
+       } catch (error) {
+        await AppFunctions.showErrorOrWarningDialog(
+           context: context,
+          subtitle: error.toString(),
+           fct: () {},
+         );
+       } finally {
+         setState(() {
+           _isLoading = false;
+         });
+       }
+    }
   }
 
   Future<void> localImagePicker() async {
@@ -167,7 +227,9 @@ class _EditAddScreenState extends State<EditAddScreen> {
       },
       galleryFCT: () async {
         _pickedImage = await picker.pickImage(source: ImageSource.gallery);
-        setState(() {});
+        setState(() {
+          docNetworkImage =  null;
+        });
       },
       removeFCT: () {
         setState(() {
@@ -257,8 +319,7 @@ class _EditAddScreenState extends State<EditAddScreen> {
                       ),
                     ),
                   ]
-                  else
-                    if(_pickedImage == null) ...[
+                  else if(_pickedImage == null) ...[
                       SizedBox(
                         width: size.width * 0.4 + 10,
                         height: size.width * 0.4,
