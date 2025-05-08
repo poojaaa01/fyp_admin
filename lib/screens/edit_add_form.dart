@@ -187,15 +187,8 @@ class _EditAddScreenState extends State<EditAddScreen> {
           textColor: Colors.white,
         );
         if (!mounted) return;
-        await AppFunctions.showErrorOrWarningDialog(
-          isError: false,
-          context: context,
-          subtitle: "Details have been edited. Do you want to clear the form?",
-          fct: () {
-            // Only clear if the user taps OK
-            clearForm();
-          },
-        );
+        await Future.delayed(const Duration(milliseconds: 500));
+        Navigator.pop(context);
 
       } on FirebaseException catch (error) {
          await AppFunctions.showErrorOrWarningDialog(
@@ -300,7 +293,7 @@ class _EditAddScreenState extends State<EditAddScreen> {
           appBar: AppBar(
             centerTitle: true,
             title: TitlesTextWidget(
-                label: isEditing ? "Edit" : "Enter your details"),
+                label: isEditing ? "Edit" : "Enter Doctor's detail"),
           ),
           body: SafeArea(
             child: SingleChildScrollView(

@@ -17,7 +17,7 @@ class DashboardButtonsModel {
 
   static List<DashboardButtonsModel> dashboardBtnList(context) => [
     DashboardButtonsModel(
-      text: "Get added",
+      text: "Add Doctor",
       imagePath: AssetsManager.add,
       onPressed: () {
         Navigator.pushNamed(context, EditAddScreen.routeName);

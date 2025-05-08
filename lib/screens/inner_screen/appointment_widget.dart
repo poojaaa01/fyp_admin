@@ -42,12 +42,12 @@ class AppointmentsWidgetFree extends StatelessWidget {
                           fontSize: 15,
                         ),
                       ),
-                      IconButton(
-                        onPressed: () {
-                          // implement delete logic if needed
-                        },
-                        icon: const Icon(Icons.clear, color: Colors.red, size: 22),
-                      ),
+                      // IconButton(
+                      //   onPressed: () {
+                      //     // implement delete logic if needed
+                      //   },
+                      //   icon: const Icon(Icons.clear, color: Colors.red, size: 22),
+                      // ),
                     ],
                   ),
                   SubtitleTextWidget(

@@ -30,7 +30,7 @@ class AssetsManager {
   static String light = "$profileImagesPath/light.png";
 
   // App
-  static String logoApp = "$appImagesPath/logo.jpg";
+  static String logoApp = "$appImagesPath/logo.png";
   static String noApt = "$appImagesPath/apt.jpg";
 
   //Dashboard
