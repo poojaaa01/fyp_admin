@@ -1,6 +1,8 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import '../../../../widgets/empty_apt.dart';
+import '../../../models/appointment_model.dart';
 import '../../../services/assets_manager.dart';
+import '../../../widgets/empty_apt.dart';
 import '../../../widgets/title_text.dart';
 import 'appointment_widget.dart';
 
@@ -14,35 +16,46 @@ class AppointmentsScreenFree extends StatefulWidget {
 }
 
 class _AppointmentsScreenFreeState extends State<AppointmentsScreenFree> {
-  bool isEmptyAppointments = false;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: const TitlesTextWidget(
-            label: 'Scheduled Appointments',
-          ),
+      appBar: AppBar(
+        title: const TitlesTextWidget(
+          label: 'Scheduled Appointments',
         ),
-        body: isEmptyAppointments
-            ? EmptyAptWidget(
-          imagePath: AssetsManager.view,
-          title: "No appointment has been booked yet",
-          subtitle: "", buttonText: '',
-        )
-            : ListView.separated(
-          itemCount: 15,
-          itemBuilder: (ctx, index) {
-            return const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 2, vertical: 6),
-              child: AppointmentsWidgetFree(),
+      ),
+      body: StreamBuilder<QuerySnapshot>(
+        stream: FirebaseFirestore.instance.collection('ordersAdvanced').snapshots(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          }
+
+          if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+            return EmptyAptWidget(
+              imagePath: AssetsManager.view,
+              title: "No appointment has been booked yet",
+              subtitle: "",
+              buttonText: '',
             );
-          },
-          separatorBuilder: (BuildContext context, int index) {
-            return const Divider(
-              // thickness: 8,
-              // color: Colors.red,
-            );
-          },
-        ));
+          }
+
+          final appointments = snapshot.data!.docs
+              .map((doc) => Appointment.fromFirestore(doc.data() as Map<String, dynamic>))
+              .toList();
+
+          return ListView.separated(
+            itemCount: appointments.length,
+            itemBuilder: (ctx, index) {
+              return Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 2, vertical: 6),
+                child: AppointmentsWidgetFree(appointment: appointments[index]),
+              );
+            },
+            separatorBuilder: (context, index) => const Divider(),
+          );
+        },
+      ),
+    );
   }
 }

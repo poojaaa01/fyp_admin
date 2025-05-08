@@ -3,19 +3,17 @@ import 'package:flutter/material.dart';
 import '../../../consts/app_constants.dart';
 import '../../../widgets/subtitle_text.dart';
 import '../../../widgets/title_text.dart';
+import '../../models/appointment_model.dart';
 
-class AppointmentsWidgetFree extends StatefulWidget {
-  const AppointmentsWidgetFree({super.key});
+class AppointmentsWidgetFree extends StatelessWidget {
+  final Appointment appointment;
 
-  @override
-  State<AppointmentsWidgetFree> createState() => _AppointmentsWidgetFreeState();
-}
+  const AppointmentsWidgetFree({super.key, required this.appointment});
 
-class _AppointmentsWidgetFreeState extends State<AppointmentsWidgetFree> {
-  bool isLoading = false;
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
       child: Row(
@@ -25,7 +23,7 @@ class _AppointmentsWidgetFreeState extends State<AppointmentsWidgetFree> {
             child: FancyShimmerImage(
               height: size.width * 0.25,
               width: size.width * 0.25,
-              imageUrl: AppConstants.imageUrl,
+              imageUrl: appointment.imageUrl,
             ),
           ),
           Flexible(
@@ -37,39 +35,40 @@ class _AppointmentsWidgetFreeState extends State<AppointmentsWidgetFree> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      const Flexible(
+                      Flexible(
                         child: TitlesTextWidget(
-                          label: 'productTitle',
+                          label: appointment.docTitle,
                           maxLines: 2,
                           fontSize: 15,
                         ),
                       ),
                       IconButton(
-                          onPressed: () {},
-                          icon: const Icon(
-                            Icons.clear,
-                            color: Colors.red,
-                            size: 22,
-                          )),
+                        onPressed: () {
+                          // implement delete logic if needed
+                        },
+                        icon: const Icon(Icons.clear, color: Colors.red, size: 22),
+                      ),
                     ],
                   ),
-                  const Row(
+                  SubtitleTextWidget(
+                    label: 'Date: ${appointment.bookDate}',
+                    fontSize: 13,
+                    color: Colors.grey,
+                  ),
+                  Row(
                     children: [
-                      TitlesTextWidget(
-                        label: 'Price:  ',
+                      const TitlesTextWidget(label: 'Price:  ', fontSize: 15),
+                      SubtitleTextWidget(
+                        label: "Rs ${appointment.price}",
                         fontSize: 15,
-                      ),
-                      Flexible(
-                        child: SubtitleTextWidget(
-                          label: "11.99 \$",
-                          fontSize: 15,
-                          color: Colors.blue,
-                        ),
+                        color: Colors.blue,
                       ),
                     ],
                   ),
-                  const SizedBox(
-                    height: 5,
+                  SubtitleTextWidget(
+                    label: 'User: ${appointment.username}',
+                    fontSize: 13,
+                    color: Colors.grey,
                   ),
                 ],
               ),
