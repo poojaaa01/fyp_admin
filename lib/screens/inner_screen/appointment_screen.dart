@@ -5,6 +5,7 @@ import '../../../services/assets_manager.dart';
 import '../../../widgets/empty_apt.dart';
 import '../../../widgets/title_text.dart';
 import 'appointment_widget.dart';
+import 'confirm_screen.dart';
 
 class AppointmentsScreenFree extends StatefulWidget {
   static const routeName = '/AppointmentsScreenFree';
@@ -49,7 +50,19 @@ class _AppointmentsScreenFreeState extends State<AppointmentsScreenFree> {
             itemBuilder: (ctx, index) {
               return Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 2, vertical: 6),
-                child: AppointmentsWidgetFree(appointment: appointments[index]),
+                child: GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => ConfirmAppointmentScreen(
+                          appointment: appointments[index],
+                        ),
+                      ),
+                    );
+                  },
+                  child: AppointmentsWidgetFree(appointment: appointments[index]),
+                ),
               );
             },
             separatorBuilder: (context, index) => const Divider(),

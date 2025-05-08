@@ -66,7 +66,7 @@ class AppointmentsWidgetFree extends StatelessWidget {
                     ],
                   ),
                   SubtitleTextWidget(
-                    label: 'User: ${appointment.username}',
+                    label: 'User: ${appointment.userName}',
                     fontSize: 13,
                     color: Colors.grey,
                   ),

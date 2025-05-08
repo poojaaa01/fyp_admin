@@ -2,32 +2,36 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:intl/intl.dart';
 
 class Appointment {
+  final String bookId;
   final String docTitle;
   final String imageUrl;
-  final String bookDate;
+  final Timestamp bookDate;
   final int price;
-  final String username;
+  final String userName;
+  final String userEmail;
 
   Appointment({
+    required this.bookId,
     required this.docTitle,
     required this.imageUrl,
     required this.bookDate,
     required this.price,
-    required this.username,
+    required this.userName,
+    required this.userEmail,
   });
 
   factory Appointment.fromFirestore(Map<String, dynamic> data) {
-    final Timestamp? timestamp = data['bookDate'];
-    final String formattedDate = timestamp != null
-        ? DateFormat('MMM dd, yyyy – hh:mm a').format(timestamp.toDate())
-        : 'Unknown Date';
-
     return Appointment(
+      bookId: data['bookId'] ?? '',
       docTitle: data['docTitle'] ?? 'Unknown Doctor',
       imageUrl: data['imageUrl'] ?? '',
-      bookDate: formattedDate,
-      price: (data['price'] as num?)?.toInt() ?? 0, // ✅ Fix here
-      username: data['username'] ?? 'Unknown User',
+      bookDate: data['bookDate'] ?? Timestamp.now(),
+      price: (data['price'] as num?)?.toInt() ?? 0,
+      userName: data['userName'] ?? 'Unknown User',
+      userEmail: data['userEmail'] ?? '',
     );
   }
+
+  String get formattedDate =>
+      DateFormat('MMM dd, yyyy – hh:mm a').format(bookDate.toDate());
 }
