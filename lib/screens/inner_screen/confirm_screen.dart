@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import '../../../models/appointment_model.dart';
@@ -55,8 +56,19 @@ class _ConfirmAppointmentScreenState extends State<ConfirmAppointmentScreen> {
         date: _dateController.text.trim(),
         time: _timeController.text.trim(),
         meetLink: _meetLinkController.text.trim(),
-        paymentLink: 'https://gpay.link.to/payment',
+        price: widget.appointment.price.toString(),
+        qrCodeUrl: 'https://firebasestorage.googleapis.com/v0/b/moksha-313b0.firebasestorage.app/o/IMG_4123.jpeg?alt=media&token=f2921f90-9ef6-4b88-9f74-8be55816a715',
       );
+
+      await FirebaseFirestore.instance
+          .collection('ordersAdvanced')
+          .doc(widget.appointment.appointmentId) // assuming appointmentId is docId
+          .update({
+        'confirmed': true,
+        'confirmedDate': _dateController.text.trim(),
+        'confirmedTime': _timeController.text.trim(),
+        'meetLink': _meetLinkController.text.trim(),
+      });
 
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Confirmation email sent!')),

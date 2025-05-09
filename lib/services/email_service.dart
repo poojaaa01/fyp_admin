@@ -9,7 +9,8 @@ class EmailService {
     required String date,
     required String time,
     required String meetLink,
-    required String paymentLink,
+    required String price,
+    required String qrCodeUrl,
   }) async {
     const serviceId = 'service_3xxfmfc';
     const templateId = 'template_cgv0xho';
@@ -34,7 +35,8 @@ class EmailService {
           'date': date,
           'time': time,
           'meet_link': meetLink,
-          'payment_link': paymentLink,
+          'price': price,
+          'qr_code_url': qrCodeUrl,
         }
       }),
     );

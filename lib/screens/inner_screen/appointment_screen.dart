@@ -42,7 +42,8 @@ class _AppointmentsScreenFreeState extends State<AppointmentsScreenFree> {
           }
 
           final appointments = snapshot.data!.docs
-              .map((doc) => Appointment.fromFirestore(doc.data() as Map<String, dynamic>))
+              .map((doc) => Appointment.fromFirestore(doc.id, doc.data() as Map<String, dynamic>))
+              .where((appointment) => appointment.confirmed != true) // filter unconfirmed only
               .toList();
 
           return ListView.separated(

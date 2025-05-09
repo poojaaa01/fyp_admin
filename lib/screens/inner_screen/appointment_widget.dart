@@ -51,7 +51,7 @@ class AppointmentsWidgetFree extends StatelessWidget {
                     ],
                   ),
                   SubtitleTextWidget(
-                    label: 'Date: ${appointment.bookDate}',
+                    label: 'Date: ${appointment.formattedDate}',
                     fontSize: 13,
                     color: Colors.grey,
                   ),
